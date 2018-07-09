@@ -3,17 +3,21 @@ package com.jp.po;
 public class IouLimitEntity {
 	private String orgID;                 // 机构号
     private String orgName;               // 机构名称 
+    private String password;              // 登录密码
     private int iouLimit;                 // 白条额度
     private String createTime;            // 创建时间
     private String updateTime;            // 更新时间
     
-    public IouLimitEntity() {
+	public IouLimitEntity() {
 		super();
 	}
-	public IouLimitEntity(String orgID, String orgName, int iouLimit, String createTime, String updateTime) {
+
+	public IouLimitEntity(String orgID, String orgName, String password, int iouLimit, String createTime,
+			String updateTime) {
 		super();
 		this.orgID = orgID;
 		this.orgName = orgName;
+		this.password = password;
 		this.iouLimit = iouLimit;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
@@ -33,6 +37,14 @@ public class IouLimitEntity {
 
 	public void setOrgName(String orgName) {
 		this.orgName = orgName;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public int getIouLimit() {
@@ -61,9 +73,10 @@ public class IouLimitEntity {
 
 	@Override
 	public String toString() {
-		return "IouLimitEntity [orgID=" + orgID + ", orgName=" + orgName + ", iouLimit=" + iouLimit + ", createTime="
-				+ createTime + ", updateTime=" + updateTime + "]";
+		return "IouLimitEntity [orgID=" + orgID + ", orgName=" + orgName + ", password=" + password + ", iouLimit="
+				+ iouLimit + ", createTime=" + createTime + ", updateTime=" + updateTime + "]";
 	}
 
-    
+   
+	
 }

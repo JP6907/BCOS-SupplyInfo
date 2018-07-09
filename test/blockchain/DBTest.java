@@ -3,6 +3,7 @@ package blockchain;
 import static org.junit.Assert.*;
 
 import java.math.BigInteger;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -78,7 +79,7 @@ public class DBTest {
 	}
 */	
 	@Test
-	public void testDatabase() {
+	public void testDatabase() throws InterruptedException, ExecutionException {
 		ApplicationContext ac = new ClassPathXmlApplicationContext("classpath:spring/applicationContext-dao.xml");
 		IIouLimitEntityService iouLimitEntityService = (IIouLimitEntityService)ac.getBean("IIouLimitEntityService");
 		IIouRecordService iouRecordService = (IIouRecordService)ac.getBean("IIouRecordService");
@@ -87,9 +88,9 @@ public class DBTest {
 		IouLimitEntity iouLimitEntity = new IouLimitEntity();
 		iouLimitEntity.setOrgID("Org1");
 		iouLimitEntity.setOrgName("OrgA");
+		iouLimitEntity.setPassword("123456");
 		iouLimitEntity.setIouLimit(10000);
-		iouLimitEntity.setCreateTime("2018-07-02");
-		iouLimitEntity.setUpdateTime("2018-07-02");
+
 		
 		iouLimitEntityService.addIouLimitEntity(iouLimitEntity);
 		
@@ -97,8 +98,6 @@ public class DBTest {
 		iouLimitEntity2.setOrgID("Org2");
 		iouLimitEntity2.setOrgName("OrgB");
 		iouLimitEntity2.setIouLimit(5000);
-		iouLimitEntity2.setCreateTime("2017-07-02");
-		iouLimitEntity2.setUpdateTime("2017-07-02");
 		iouLimitEntityService.addIouLimitEntity(iouLimitEntity2);
 		
 		//获取机构1白条额度
@@ -126,6 +125,7 @@ public class DBTest {
 		transaction.setTransTime("2018-06-30");
 		transaction.setUpdateTime("2018-07-02");
 		transactionService.addTransactionRecord(transaction);
+		
 		IouRecord iouRecord = new IouRecord();
 		iouRecord.setIouId("12345");
 		iouRecord.setFromOrg("Org1");

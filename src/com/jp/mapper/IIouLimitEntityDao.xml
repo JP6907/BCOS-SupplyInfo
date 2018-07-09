@@ -5,16 +5,16 @@
 <mapper namespace="com.jp.mapper.IIouLimitEntityDao">
 
     <!-- 目的：为dao接口方法提供sql语句配置 -->
-    <insert id="addIouLimitEntity" parameterType="IouLimitEntity">
+    <insert id="addIouLimitEntity" parameterType="com.jp.po.IouLimitEntity">
         <!-- 具体的sql -->
-        INSERT INTO `iouLimitEntity` (`orgID`, `orgName`, `iouLimit`, `createTime`, `updateTime`) VALUES ('${iouLimitEntity.orgID}','${iouLimitEntity.orgName}',${iouLimitEntity.iouLimit},'${iouLimitEntity.createTime}','${iouLimitEntity.updateTime}');
+        INSERT INTO `iouLimitEntity` (`orgID`, `orgName`, `password`, `iouLimit`, `createTime`, `updateTime`) VALUES ('${iouLimitEntity.orgID}','${iouLimitEntity.orgName}','${iouLimitEntity.password}',${iouLimitEntity.iouLimit},'${iouLimitEntity.createTime}','${iouLimitEntity.updateTime}');
     </insert>
     
-    <update id="updateIouLimitEntity" parameterType="IouLimitEntity">
+    <update id="updateIouLimitEntity" parameterType="com.jp.po.IouLimitEntity">
 		UPDATE `iouLimitEntity` SET `orgName`='${iouLimitEntity.orgName}', `iouLimit`=${iouLimitEntity.iouLimit}, `createTime`='${iouLimitEntity.createTime}', `updateTime`='${iouLimitEntity.updateTime}' WHERE `orgID`='${iouLimitEntity.orgID}';
     </update>
     
-    <select id="queryEntityByOrgName" resultType="IouLimitEntity" parameterType="java.lang.String">
+    <select id="queryEntityByOrgName" resultType="com.jp.po.IouLimitEntity" parameterType="java.lang.String">
         <!-- 具体的sql -->
         SELECT * FROM `iouLimitEntity` WHERE `orgName`='${orgName}';
     </select>
@@ -27,8 +27,16 @@
     	UPDATE `iouLimitEntity` SET `iouLimit`=${iouLimit}, `updateTime`='${updateTime}' WHERE `orgID`='${orgID}';
     </update>
     
-    <select id="queryIouLimitEntityByOrgID" resultType="IouLimitEntity" parameterType="java.lang.String">
+    <select id="queryIouLimitEntityByOrgID" resultType="com.jp.po.IouLimitEntity" parameterType="java.lang.String">
         <!-- 具体的sql -->
         SELECT * FROM `iouLimitEntity` WHERE `orgID`='${orgID}';
+    </select>
+<select id = 'checkPassword' resultType='java.lang.String'  parameterType='java.lang.String'>
+    	<!-- 具体的sql -->
+    	SELECT password FROM `iouLimitEntity` WHERE `orgID`='${orgID}';
+    </select>
+    <select id = 'checkName' resultType='java.lang.String'  parameterType='java.lang.String'>
+    	<!-- 具体的sql -->
+    	SELECT orgName FROM `iouLimitEntity` WHERE `orgID`='${orgID}';
     </select>
 </mapper>

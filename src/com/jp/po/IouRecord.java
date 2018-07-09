@@ -10,8 +10,6 @@ public class IouRecord {
     private String iouStatus;           // 白条状态 --C,已还清--P,未还清
     private String updateTime;          // 更新时间
     
-    
-    
 	public IouRecord() {
 		super();
 	}
@@ -100,6 +98,6 @@ public class IouRecord {
 				+ ", updateTime=" + updateTime + "]";
 	}
     
-
-
+	
+   
 }

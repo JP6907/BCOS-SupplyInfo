@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jp.mapper.IIouRecordDao">
     <!-- 目的：为dao接口方法提供sql语句配置 -->
-    <insert id="addIouRecord" parameterType="IouRecord">
+    <insert id="addIouRecord" parameterType="com.jp.po.IouRecord">
         <!-- 具体的sql -->
         INSERT INTO `iouRecord` (`iouId`, `fromOrg`, `recvOrg`, `transTime`, `amount`, `paidAmt`, `iouStatus`, `updateTime`) VALUES ('${iouRecord.iouId}','${iouRecord.fromOrg}','${iouRecord.recvOrg}','${iouRecord.transTime}',${iouRecord.amount},${iouRecord.paidAmt},'${iouRecord.iouStatus}','${iouRecord.updateTime}');
     </insert>
@@ -13,7 +13,7 @@
 		UPDATE `iouRecord` SET `iouStatus`='${iouStatus}' WHERE `iouId`='${iouId}';
     </update>
     
-    <select id="queryIouRecordByIouId" resultType="IouRecord" parameterType="java.lang.String">
+    <select id="queryIouRecordByIouId" resultType="com.jp.po.IouRecord" parameterType="java.lang.String">
         <!-- 具体的sql -->
         SELECT * FROM `iouRecord` WHERE `iouId`='${iouId}';
     </select>
@@ -22,7 +22,7 @@
     	SELECT * FROM `iouRecord` WHERE `fromOrg`='${fromOrg}';
     </select>
 
-	<select id="queryAllIouRecord" resultType="IouRecord">
+	<select id="queryAllIouRecord" resultType="com.jp.po.IouRecord">
 		SELECT * FROM `iouRecord`;
 	</select>
 </mapper>

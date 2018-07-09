@@ -12,7 +12,6 @@ import org.bcos.channel.client.Service;
 import org.bcos.channel.handler.ChannelConnections;
 import org.bcos.web3j.abi.datatypes.Utf8String;
 import org.bcos.web3j.abi.datatypes.generated.Int256;
-import org.bcos.web3j.abi.datatypes.generated.Uint256;
 import org.bcos.web3j.crypto.Credentials;
 import org.bcos.web3j.crypto.WalletUtils;
 import org.bcos.web3j.protocol.Web3j;
@@ -25,11 +24,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Controller;
 
 import com.jp.exception.initConfigException;
-import com.jp.po.IouLimitEntity;
 import com.jp.po.IouRecord;
 import com.jp.po.Transaction;
+import com.jp.service.IIouLimitEntityService;
+import com.jp.service.IIouRecordService;
+import com.jp.service.ITransactionService;
 import com.jp.util.PropertiesUtil;
 import com.jp.util.Utils;
 import com.jp.wrapper.SuplInfo;
@@ -40,6 +42,7 @@ import com.jp.wrapper.SuplInfo.SetIouLimitEventResponse;
 import com.jp.wrapper.SuplInfo.UpdateTransStatusResultEventResponse;
 
 
+@Controller
 public class IOUService {
 	static Logger logger = LoggerFactory.getLogger(IOUService.class);
 	static private final List<String> IOU_STATELIST= Arrays.asList("U","C","P");
@@ -52,9 +55,12 @@ public class IOUService {
 	private static AbstractApplicationContext Context = null;
 	private static Credentials credentials = null;
 	
-	private static IouLimitEntityServiceImpl iouLimitEntityServiceImpl = new IouLimitEntityServiceImpl();
-	private static IouRecordServiceImpl iouRecordServiceImpl = new IouRecordServiceImpl();
-	private static TransactionServiceImpl transactionServiceImpl = new TransactionServiceImpl();
+	@Autowired
+	private static IIouLimitEntityService iouLimitEntityServiceImpl;
+	@Autowired
+	private static IIouRecordService iouRecordServiceImpl;
+	@Autowired
+	private static ITransactionService transactionServiceImpl;
 	@Autowired
 	private static SuplInfo contractTransaction;
 	
@@ -164,16 +170,40 @@ public class IOUService {
 
 //	@Service("addTransaction")
 	
-	public static String initIouLimitData(IouLimitEntity iouLimitEntity) throws InterruptedException, ExecutionException {
-		//检查一下本地有没有已经注册了的机构
-		iouLimitEntityServiceImpl.addIouLimitEntity(iouLimitEntity);
+//	public static boolean checkPassword(String orgID,String password) {
+//		boolean isSuccess = iouLimitEntityServiceImpl.checkPasswordByOrgID(password, orgID);
+//		if(isSuccess) {
+//			System.out.println("登录成功");
+//			return true;
+//		}else {
+//			System.out.println("登录失败");
+//			return false;
+//		}
+//	}
 	
+	public static String initIouLimitData(String orgID,String orgName,String password,int iouLimit) throws InterruptedException, ExecutionException {
+//		IouLimitEntity iouLimitEntity = new IouLimitEntity();
+	    long now=System.currentTimeMillis();
+		String createTime = Utils.sdf(now);
+//		iouLimitEntity.setOrgID(orgID);
+//		iouLimitEntity.setOrgName(orgName);
+//		iouLimitEntity.setPassword(password);
+//		iouLimitEntity.setIouLimit(iouLimit);
+//		iouLimitEntity.setCreateTime(createTime);
+//		iouLimitEntity.setUpdateTime(createTime);
+//		//检查一下本地有没有已经注册了的机构
+//		
+//		boolean isSuccess = iouLimitEntityServiceImpl.addIouLimitEntity(orgID,orgName,password,iouLimit);
+//		if(!isSuccess) {
+//			//创建失败
+//			return "创建失败,已经有该机构";
+//		}
 		//区块链上新建
-		TransactionReceipt receipt = contractTransaction.initIouLimitData( new Utf8String(iouLimitEntity.getOrgID()),
-				new Utf8String(iouLimitEntity.getOrgName()),
-				new Int256(iouLimitEntity.getIouLimit()),
-				new Utf8String(iouLimitEntity.getCreateTime()),
-				new Utf8String(iouLimitEntity.getUpdateTime())
+		TransactionReceipt receipt = contractTransaction.initIouLimitData( new Utf8String(orgID),
+				new Utf8String(orgName),
+				new Int256(iouLimit),
+				new Utf8String(createTime),
+				new Utf8String(createTime)
 				).get();
 		List<InitIouLimitDataEventResponse> responses = contractTransaction.getInitIouLimitDataEvents(receipt);
 		String result=responses.get(0)._json.toString(); 
@@ -183,7 +213,7 @@ public class IOUService {
 		//设置数据库的limit
 		long now=System.currentTimeMillis();
 		String updateTime = Utils.sdf(now); // 获取当前时间
-		iouLimitEntityServiceImpl.setIouLimit(amount, updateTime, orgID);
+		//iouLimitEntityServiceImpl.setIouLimit(amount, updateTime, orgID);
 		//更改区块链上的
 		TransactionReceipt receipt = contractTransaction.setIouLimit(new Utf8String(orgID), new Int256(amount)).get();
 		logger.info("setIouLimit receipt transactionHash:{}",receipt.getTransactionHash());
@@ -224,7 +254,10 @@ public class IOUService {
 //	}
 	public static String iouRecycle(String iouId,int amount) throws InterruptedException, ExecutionException {
 		// 修改后端数据库
-		iouLimitEntityServiceImpl.recycleIou(iouId,amount);
+//		boolean isSuccess = iouLimitEntityServiceImpl.recycleIou(iouId,amount);
+//		if(!isSuccess) {
+//			System.out.println("回收白条失败");
+//		}
 		//更新区块链
 		TransactionReceipt receipt = contractTransaction.iouRecycle(new Utf8String(iouId),new Int256(amount)).get();
 		logger.info("iouRecycle receipt transactionHash:{}",receipt);
@@ -233,20 +266,39 @@ public class IOUService {
 		return result;
 	}
 	
-	public static String addTransaction(Transaction transaction) throws InterruptedException, ExecutionException{
-		//修改后端数据库
-		transactionServiceImpl.addTransactionRecord(transaction);
+	public static String addTransaction(String saleOrg,String buyOrg,String transType,long amount,String latestStatus) throws InterruptedException, ExecutionException{
+		             // 合同hash
+	    long now=System.currentTimeMillis();
+		String transTime = Utils.sdf(now);
+		String conID="conID"+transTime;               // 合同号
+	    String conHash="conHash";
+//		Transaction transaction = new Transaction();
+//		transaction.setConID(conID);
+//		transaction.setSaleOrg(saleOrg);
+//		transaction.setBuyOrg(buyOrg);
+//		transaction.setTransType(transType);
+//		transaction.setAmount(amount);
+//		transaction.setLatestStatus(latestStatus);
+//		transaction.setConHash(conHash);
+//		transaction.setTransTime(transTime);
+//		transaction.setUpdateTime(transTime);
+//		//修改后端数据库
+//		boolean isSuccess = transactionServiceImpl.addTransactionRecord(transaction);
+//		if(!isSuccess) {
+//			System.out.println("录入出错");
+//			return "录入交易出错";
+//		}
 		//更新区块链
-		logger.info("transaction's conId is "+transaction.getConID());
-		TransactionReceipt receipt = contractTransaction.addTransaction(new Utf8String(transaction.getConID()),
-				new Utf8String(transaction.getSaleOrg()),
-				new Utf8String(transaction.getBuyOrg()),
-				new Utf8String(transaction.getTransType()),
-				new Int256(transaction.getAmount()), 
-				new Utf8String(transaction.getConHash()),
-				new Utf8String(transaction.getLatestStatus()),
-				new Utf8String(transaction.getTransTime()),
-				new Utf8String(transaction.getUpdateTime())).get();
+		logger.info("transaction's conId is "+conID);
+		TransactionReceipt receipt = contractTransaction.addTransaction(new Utf8String(conID),
+				new Utf8String(saleOrg),
+				new Utf8String(buyOrg),
+				new Utf8String(transType),
+				new Int256(amount), 
+				new Utf8String(conHash),
+				new Utf8String(latestStatus),
+				new Utf8String(transTime),
+				new Utf8String(transTime)).get();
 		logger.info("addTransaction receipt transactionHash:{}",receipt.getTransactionHash());
 		logger.info("receipt's contract addr is ?"+receipt.getContractAddress());
 		List<AddTransactionEventResponse> responses = contractTransaction.getAddTransactionEvents(receipt);
@@ -257,7 +309,11 @@ public class IOUService {
 	
 	public static int updateTransStatus(String conId, String status) throws InterruptedException, ExecutionException {
 		//更新数据库
-		transactionServiceImpl.updateTransactionStatusByConId(conId, status);
+//		boolean isSuccess = transactionServiceImpl.updateTransactionStatusByConId(conId, status);
+//		if(!isSuccess) {
+//			System.out.println("更新交易出错");
+//			return -1;
+//		}
 		//更新区块链
 		if(!TRAN_LATESTSTATE_LIST.contains(status)) {
 			logger.info("the value of IOU Status must be C or U.");
@@ -270,43 +326,48 @@ public class IOUService {
 		return result;
 	}
 	
-	public static Utf8String queryTransactionByConId(String conId) throws InterruptedException, ExecutionException{
+	public static Transaction queryTransactionByConId(String conId) throws InterruptedException, ExecutionException{
 		// 直接从后端数据库查询
 		Transaction transaction = transactionServiceImpl.getTransactionByConId(conId);
+//		if(transaction==null) {
+//			// 不存在该交易的话返回null	
+//		}
 		// transaction to json
-		return new Utf8String("还没将transaction转化为json");
+		return transaction;
 		//应该删掉以下的代码
 //		Future<Utf8String> result = contractTransaction.queryTransByConId(new Utf8String(conId));
 //		logger.info("queryTransaction result is:{}",result.get());
 //		return result.get();
 	}
 	
-	public static String queryTransList(int pageNo,int pageSize) throws InterruptedException, ExecutionException {
+	public static List<Transaction> queryTransList(int pageNo,int pageSize) throws InterruptedException, ExecutionException {
 		// 直接从后端数据库查询
 		List<Transaction> result = transactionServiceImpl.getAllTransaction();
 		// transaction to json
-		return "还没将transactionList转化为json";
+		return result;
 		//应该删掉以下的代码
 //		String receipt = contractTransaction.queryTransList(new Uint256(pageNo),new Uint256(pageSize)).get().getValue();
 //		logger.info("queryTransList receipt transactionHash:{}",receipt);
 //		return receipt;
 	}
-	public static String getIouLength() throws InterruptedException, ExecutionException {
+	public static int getIouLength() throws InterruptedException, ExecutionException {
 		// 直接从后端数据库查询   TODO
-		
+		List<IouRecord> result = iouRecordServiceImpl.getAllIouRecord();
+		return result.size();
 		//应该删掉以下的代码
-		Uint256 receipt = contractTransaction.getIouLength().get();
-		logger.info("getIouLength receipt transactionHash:{}",receipt);
-		return receipt.getValue().toString();
+//		Uint256 receipt = contractTransaction.getIouLength().get();
+//		logger.info("getIouLength receipt transactionHash:{}",receipt);
+//		return receipt.getValue().toString();
 	}
 	
-	public static String getTransLength() throws InterruptedException, ExecutionException {
+	public static int getTransLength() throws InterruptedException, ExecutionException {
 		// 直接从后端数据库查询  TODO
-		
+		List<Transaction> result = transactionServiceImpl.getAllTransaction();
+		return result.size();
 		//应该删掉以下的代码
-		Uint256 receipt = contractTransaction.getTransLength().get();
-		logger.info("getTransLength receipt transactionHash:{}",receipt);
-		return receipt.getValue().toString();
+//		Uint256 receipt = contractTransaction.getTransLength().get();
+//		logger.info("getTransLength receipt transactionHash:{}",receipt);
+//		return receipt.getValue().toString();
 	}
 	public static Utf8String getVersion() throws InterruptedException, ExecutionException{
 		Future<Utf8String> result = contractTransaction.getVersion();

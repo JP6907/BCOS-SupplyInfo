@@ -99,7 +99,7 @@ public class IOUService {
     	
     	System.out.println("调用合约数据......");
     	System.out.println("getVersion:" + contractTransaction.getVersion().get());
-    	System.out.println("getNumber:" + contractTransaction.getNumber().get());
+    	System.out.println("getNumber:" + contractTransaction.getNumber().get().getValue());
     	
     	return contractTransaction;
 	}
@@ -192,8 +192,8 @@ public class IOUService {
 	public void testIOUService() throws Exception {
 		SuplInfo contractTransaction = IOUService.initObj();
 		
-		IouLimitEntity iouLimitEntity1 = new IouLimitEntity("ILE001", "SCUT-SF1", 9999, "2018-07-08 11:00", "2018-07-08 11:00");
-		IouLimitEntity iouLimitEntity2 = new IouLimitEntity("ILE002", "SCUT-SF2", 8888, "2018-07-08 12:00", "2018-07-08 12:00");
+		IouLimitEntity iouLimitEntity1 = new IouLimitEntity("ILE001", "SCUT-SF1", "123456", 9999, "2018-07-08 11:00", "2018-07-08 11:00");
+		IouLimitEntity iouLimitEntity2 = new IouLimitEntity("ILE002", "SCUT-SF2", "123456", 8888, "2018-07-08 12:00", "2018-07-08 12:00");
 		IouRecord iouRecord = new IouRecord("IR001", "SCUT-SF1", "SCUT-SF2", "2018-07-08 23:00", 100, 50, "P", "2018-07-08 24:00");
 		Transaction transaction = new Transaction("CON001", "ILE001", "ILE002", "Type1", 5000, null, "P", "2018-07-09 02:00", "2018-07-09 02:00");
 		System.out.println(transaction.toString());
@@ -214,10 +214,10 @@ public class IOUService {
 		System.out.println("The IouLimit of ILE001 is " + limit.toString());
 		
 		//System.out.println("添加白条记录......");
-		//contractTransaction.addIou
+		//contractTra saction.addIou
 		
 		Uint256 iouLength = contractTransaction.getIouLength().get();
-		System.out.println("The IouLength is " + iouLength.toString());
+		System.out.println("The IouLength is " + iouLength.getValue());
 		
 	}
 	

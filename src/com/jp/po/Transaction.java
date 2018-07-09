@@ -11,9 +11,10 @@ public class Transaction {
     private String transTime;           // 交易时间
     private String updateTime;          // 更新时间
     
-    public Transaction() {
+	public Transaction() {
 		super();
 	}
+
 	public Transaction(String conID, String saleOrg, String buyOrg, String transType, long amount, String conHash,
 			String latestStatus, String transTime, String updateTime) {
 		super();
@@ -108,5 +109,5 @@ public class Transaction {
 	}
     
     
-	
+
 }

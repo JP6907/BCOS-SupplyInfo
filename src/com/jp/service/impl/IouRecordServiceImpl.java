@@ -3,12 +3,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.jp.mapper.IIouLimitEntityDao;
+import com.jp.mapper.IIouRecordDao;
+import com.jp.mapper.ITransactionDao;
 import com.jp.po.IouLimitEntity;
 import com.jp.po.IouRecord;
-import com.jp.mapper.*;
 import com.jp.service.IIouRecordService;
 
+
+
+
+@Service
 public class IouRecordServiceImpl implements IIouRecordService{
 
 	@Autowired(required=false)
@@ -21,9 +28,10 @@ public class IouRecordServiceImpl implements IIouRecordService{
 	@Override
 	public List<IouRecord> getIouRecordList(int pageNo,int pageSize) {
 		// TODO Auto-generated method stub
+		pageNo--;
 		List<IouRecord> allIouRecord = iiouRecordDao.queryAllIouRecord();
 		List<IouRecord> result = new ArrayList<>();
-		for(int i=pageNo*pageSize;i<pageSize;i++) {
+		for(int i=pageNo*pageSize;i<allIouRecord.size()&&i<(pageNo+1)*pageSize;i++) {
 			result.add(allIouRecord.get(i));
 		}
 		return result;
@@ -63,9 +71,15 @@ public class IouRecordServiceImpl implements IIouRecordService{
 			return;
 		}else {
 			iiouRecordDao.addIouRecord(iouRecord);
-			System.out.println("创建交易");
+			System.out.println("创建白条");
 			return;
 		}
+	}
+
+	@Override
+	public List<IouRecord> getAllIouRecord() {
+		// TODO Auto-generated method stub
+		return iiouRecordDao.queryAllIouRecord();
 	}
 	
 }
