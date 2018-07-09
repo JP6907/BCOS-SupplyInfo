@@ -4,17 +4,16 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.bcos.channel.client.Service;
 import org.bcos.channel.handler.ChannelConnections;
 import org.bcos.web3j.abi.datatypes.Utf8String;
 import org.bcos.web3j.abi.datatypes.generated.Int256;
+import org.bcos.web3j.abi.datatypes.generated.Uint256;
 import org.bcos.web3j.crypto.Credentials;
 import org.bcos.web3j.crypto.WalletUtils;
 import org.bcos.web3j.protocol.Web3j;
 import org.bcos.web3j.protocol.channel.ChannelEthereumService;
-import org.bcos.web3j.protocol.core.methods.response.EthBlockNumber;
 import org.bcos.web3j.protocol.http.HttpService;
 import org.bcos.web3j.protocol.parity.Parity;
 import org.junit.Test;
@@ -23,7 +22,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import com.jp.exception.initConfigException;
+import com.jp.po.IouLimitEntity;
+import com.jp.po.IouRecord;
+import com.jp.po.Transaction;
 import com.jp.util.PropertiesUtil;
+import com.jp.util.Utils;
 import com.jp.wrapper.SuplInfo;
 
 
@@ -48,7 +51,7 @@ public class IOUService {
 	
 	private static String subPath = null;
 	
-	public static void initObj() throws Exception{
+	public static SuplInfo initObj() throws Exception{
 		String path = Thread.currentThread().getContextClassLoader().getResource("").toString();
 		subPath = path.substring(5, path.length());	
 		
@@ -69,10 +72,7 @@ public class IOUService {
     		e.printStackTrace();
     	}
 		
-		System.out.println("调用web3的getBlockNumber接口");
-		EthBlockNumber ethBlockNumber = web3j.ethBlockNumber().sendAsync().get();
-		System.out.println("获取ethBlockNumber:{}" + ethBlockNumber.getBlockNumber());
-
+		queryBlockNumber(web3j);
 		
         System.out.println("初始化交易签名私钥......");
 		// 初始化交易签名私钥
@@ -99,10 +99,9 @@ public class IOUService {
     	
     	System.out.println("调用合约数据......");
     	System.out.println("getVersion:" + contractTransaction.getVersion().get());
-    	System.out.println("getNumber:" + contractTransaction.getNumber().get().toString());
-    	System.out.println("getIouLength:" + contractTransaction.getIouLength().get().toString());
-
+    	System.out.println("getNumber:" + contractTransaction.getNumber().get());
     	
+    	return contractTransaction;
 	}
 	
 	private static Web3j buildWeb3jByRPC(AbstractApplicationContext context) {
@@ -163,8 +162,8 @@ public class IOUService {
 	}
 
 	
-	public static void queryBlockNumber() throws IOException{
-		System.out.println("queryBlockNumber......");
+	public static void queryBlockNumber(Web3j web3j) throws IOException{
+		System.out.println("调用web3的getBlockNumber接口......");
 		BigInteger blockNumber = web3j.ethBlockNumber().send().getBlockNumber();
 		System.out.println("blockNumber:{}"+blockNumber.intValue());
 	}
@@ -191,7 +190,35 @@ public class IOUService {
 	
 	@Test
 	public void testIOUService() throws Exception {
-		IOUService.initObj();
+		SuplInfo contractTransaction = IOUService.initObj();
+		
+		IouLimitEntity iouLimitEntity1 = new IouLimitEntity("ILE001", "SCUT-SF1", 9999, "2018-07-08 11:00", "2018-07-08 11:00");
+		IouLimitEntity iouLimitEntity2 = new IouLimitEntity("ILE002", "SCUT-SF2", 8888, "2018-07-08 12:00", "2018-07-08 12:00");
+		IouRecord iouRecord = new IouRecord("IR001", "SCUT-SF1", "SCUT-SF2", "2018-07-08 23:00", 100, 50, "P", "2018-07-08 24:00");
+		Transaction transaction = new Transaction("CON001", "ILE001", "ILE002", "Type1", 5000, null, "P", "2018-07-09 02:00", "2018-07-09 02:00");
+		System.out.println(transaction.toString());
+		transaction.setConHash(Utils.getSHA256Str(transaction.toString()));
+		System.out.println(transaction.toString());
+		//初始化白条机构信息
+		System.out.println("初始化白条机构信息......");
+		contractTransaction.initIouLimitData(new Utf8String("ILE001"), new Utf8String("SCUT-SF1"), new Int256(9999), new Utf8String("2018-07-08 11:00"), new Utf8String("2018-07-08 11:00"));
+		contractTransaction.initIouLimitData(new Utf8String("ILE002"), new Utf8String("SCUT-SF2"), new Int256(8888), new Utf8String("2018-07-08 12:00"), new Utf8String("2018-07-08 12:00"));
+		
+		//设定白条额度
+		System.out.println("设置白条额度......");
+		contractTransaction.setIouLimit(new Utf8String("ILE001"), new Int256(9988));
+		
+		//获取白条额度
+		System.out.println("获取白条额度......");
+		Utf8String limit = contractTransaction.getIouLimit(new Utf8String("ILE001")).get();
+		System.out.println("The IouLimit of ILE001 is " + limit.toString());
+		
+		//System.out.println("添加白条记录......");
+		//contractTransaction.addIou
+		
+		Uint256 iouLength = contractTransaction.getIouLength().get();
+		System.out.println("The IouLength is " + iouLength.toString());
+		
 	}
 	
 }

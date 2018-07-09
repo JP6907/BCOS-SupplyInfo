@@ -10,88 +10,96 @@ public class IouRecord {
     private String iouStatus;           // 白条状态 --C,已还清--P,未还清
     private String updateTime;          // 更新时间
     
-    // getter methods
-    public String getIouId() {
-    	return this.iouId;
-    }
     
-    public String getFromOrg() {
-    	return this.fromOrg;
-    }
     
-    public String getRecvOrg() {
-    	return this.recvOrg;
-    }
+	public IouRecord() {
+		super();
+	}
+
+	public IouRecord(String iouId, String fromOrg, String recvOrg, String transTime, int amount, int paidAmt,
+			String iouStatus, String updateTime) {
+		super();
+		this.iouId = iouId;
+		this.fromOrg = fromOrg;
+		this.recvOrg = recvOrg;
+		this.transTime = transTime;
+		this.amount = amount;
+		this.paidAmt = paidAmt;
+		this.iouStatus = iouStatus;
+		this.updateTime = updateTime;
+	}
+
+	public String getIouId() {
+		return iouId;
+	}
+
+	public void setIouId(String iouId) {
+		this.iouId = iouId;
+	}
+
+	public String getFromOrg() {
+		return fromOrg;
+	}
+
+	public void setFromOrg(String fromOrg) {
+		this.fromOrg = fromOrg;
+	}
+
+	public String getRecvOrg() {
+		return recvOrg;
+	}
+
+	public void setRecvOrg(String recvOrg) {
+		this.recvOrg = recvOrg;
+	}
+
+	public String getTransTime() {
+		return transTime;
+	}
+
+	public void setTransTime(String transTime) {
+		this.transTime = transTime;
+	}
+
+	public int getAmount() {
+		return amount;
+	}
+
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+
+	public int getPaidAmt() {
+		return paidAmt;
+	}
+
+	public void setPaidAmt(int paidAmt) {
+		this.paidAmt = paidAmt;
+	}
+
+	public String getIouStatus() {
+		return iouStatus;
+	}
+
+	public void setIouStatus(String iouStatus) {
+		this.iouStatus = iouStatus;
+	}
+
+	public String getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(String updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	@Override
+	public String toString() {
+		return "IouRecord [iouId=" + iouId + ", fromOrg=" + fromOrg + ", recvOrg=" + recvOrg + ", transTime="
+				+ transTime + ", amount=" + amount + ", paidAmt=" + paidAmt + ", iouStatus=" + iouStatus
+				+ ", updateTime=" + updateTime + "]";
+	}
     
-    public String getTransTime() {
-    	return this.transTime;
-    }
-    
-    public int getAmount() {
-    	return this.amount;
-    }
-    
-    public int getPaidAmt() {
-    	return this.paidAmt;
-    }
-    
-    public String getIouStatus() {
-    	return this.iouStatus;
-    }
-    
-    public String getUpdateTime() {
-    	return this.updateTime;
-    }
-    
-    public IouRecord getIouRecord() {
-    	return this;
-    }
-    // setter methods
-    
-    public void setIouId(String _iouId) {
-    	this.iouId = _iouId;
-    }
-    
-    public void setFromOrg(String _fromOrg) {
-    	this.fromOrg = _fromOrg;
-    }
-    
-    public void setRecvOrg(String _recvOrg) {
-    	this.recvOrg = _recvOrg;
-    }
-    
-    public void setTransTime(String _transTime) {
-    	this.transTime = _transTime;
-    }
-    
-    public void setAmount(int _amount) {
-    	this.amount = _amount;
-    }
-    
-    public void setPaidAmt(int _paidAmt) {
-    	this.paidAmt = _paidAmt;
-    }
-    
-    public void setIouStatus(String _iouStatus) {
-    	this.iouStatus = _iouStatus;
-    }
-    
-    public void setUpdateTime(String _updateTime) {
-    	this.updateTime = _updateTime;
-    }
-    
-    public void setIouRecord(IouRecord iouRecord) {
-    	this.iouId = iouRecord.iouId;
-    	this.fromOrg = iouRecord.fromOrg;
-    	this.recvOrg = iouRecord.recvOrg;
-    	this.transTime = iouRecord.transTime;
-    	this.amount = iouRecord.amount;
-    	this.paidAmt = iouRecord.paidAmt;
-    	this.iouStatus = iouRecord.iouStatus;
-    	this.updateTime = iouRecord.updateTime;
-    }
-    // to json
-    
-    // from json
+
 
 }

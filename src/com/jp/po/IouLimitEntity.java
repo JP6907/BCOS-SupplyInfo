@@ -6,60 +6,64 @@ public class IouLimitEntity {
     private int iouLimit;                 // 白条额度
     private String createTime;            // 创建时间
     private String updateTime;            // 更新时间
+    
+    public IouLimitEntity() {
+		super();
+	}
+	public IouLimitEntity(String orgID, String orgName, int iouLimit, String createTime, String updateTime) {
+		super();
+		this.orgID = orgID;
+		this.orgName = orgName;
+		this.iouLimit = iouLimit;
+		this.createTime = createTime;
+		this.updateTime = updateTime;
+	}
 
-    // getter methods
-    public String getOrgID() {
-    	return this.orgID;
-    }
+	public String getOrgID() {
+		return orgID;
+	}
+
+	public void setOrgID(String orgID) {
+		this.orgID = orgID;
+	}
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	public int getIouLimit() {
+		return iouLimit;
+	}
+
+	public void setIouLimit(int iouLimit) {
+		this.iouLimit = iouLimit;
+	}
+
+	public String getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(String updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	@Override
+	public String toString() {
+		return "IouLimitEntity [orgID=" + orgID + ", orgName=" + orgName + ", iouLimit=" + iouLimit + ", createTime="
+				+ createTime + ", updateTime=" + updateTime + "]";
+	}
+
     
-    public String getOrgName() {
-    	return this.orgName;
-    }
-    
-    public int getIouLimit() {
-    	return this.iouLimit;
-    }
-    
-    public String getCreateTime() {
-    	return this.createTime;
-    }
-    
-    public String getUpdateTime() {
-    	return this.updateTime;
-    }
-    
-    public IouLimitEntity getIouLimitEntity() {
-    	return this;
-    }
-    // setter methods
-    public void setOrgID(String _orgID) {
-    	this.orgID = _orgID;
-    }
-    
-    public void setOrgName(String _orgName) {
-    	this.orgName = _orgName;
-    }
-    
-    public void setIouLimit(int _iouLimit) {
-    	this.iouLimit = _iouLimit;
-    }
-    
-    public void setCreateTime(String _createTime) {
-    	this.createTime = _createTime;
-    }
-    
-    public void setUpdateTime(String _updateTime) {
-    	this.updateTime = _updateTime;
-    }
-    
-    public void setIouLimitEntity(IouLimitEntity _iouLimitEntity) {
-    	this.orgID = _iouLimitEntity.orgID;
-    	this.orgName = _iouLimitEntity.orgName;
-    	this.iouLimit = _iouLimitEntity.iouLimit;
-    	this.createTime = _iouLimitEntity.createTime;
-    	this.updateTime = _iouLimitEntity.updateTime;
-    }
-    // to json
-    
-    // from json
 }

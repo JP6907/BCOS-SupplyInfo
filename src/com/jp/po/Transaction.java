@@ -11,97 +11,102 @@ public class Transaction {
     private String transTime;           // 交易时间
     private String updateTime;          // 更新时间
     
-    // getter methods
-    public String getConID() {
-    	return this.conID;
-    }
-    
-    public String getSaleOrg() {
-    	return this.saleOrg;
-    }
-    
-    public String getBuyOrg() {
-    	return this.buyOrg;
-    }
-    
-    public String getTransType() {
-    	return this.transType;
-    }
-    
-    public long getAmount() {
-    	return this.amount;
-    }
-    
-    public String getConHash() {
-    	return this.conHash;
-    }
-    
-    public String getLatestStatus() {
-    	return this.latestStatus;
-    }
-    
-    public String getTransTime() {
-    	return this.transTime;
-    }
-    
-    public String getUpdateTime() {
-    	return this.updateTime;
-    }
-    
-    public Transaction getTransaction() {
-    	return this;
-    }
-    // setter methods
-    
-    public void setConID(String _conID) {
-    	this.conID = _conID;
-    }
-    
-    public void setSaleOrg(String _saleOrg) {
-    	this.saleOrg = _saleOrg;
-    }
-    
-    public void setBuyOrg(String _buyOrg) {
-    	this.buyOrg = _buyOrg;
-    }
-    
-    public void setTransType(String _transType) {
-    	this.transType = _transType;
-    }
-    
-    public void setAmount(long _amount) {
-    	this.amount = _amount;
-    }
-    
-    public void setConHash(String _conHash) {
-    	this.conHash = _conHash;
-    }
-    
-    public void setLatestStatus(String _latestStatus) {
-    	this.latestStatus = _latestStatus;
-    }
-    
-    public void setTransTime(String _transTime) {
-    	this.transTime = _transTime;
-    }
-    
-    public void setUpdateTime(String _updateTime) {
-    	this.updateTime = _updateTime;
-    }
-    
-    public void setTransaction(Transaction transaction) {
-    	this.conID = transaction.conID;
-    	this.buyOrg = transaction.buyOrg;
-    	this.saleOrg = transaction.saleOrg;
-    	this.transType = transaction.transType;
-    	this.amount = transaction.amount;
-    	this.conHash = transaction.conHash;
-    	this.latestStatus = transaction.latestStatus;
-    	this.transTime = transaction.transTime;
-    	this.updateTime = transaction.updateTime;
-    }
-    // to json
-    
-    // from json
+    public Transaction() {
+		super();
+	}
+	public Transaction(String conID, String saleOrg, String buyOrg, String transType, long amount, String conHash,
+			String latestStatus, String transTime, String updateTime) {
+		super();
+		this.conID = conID;
+		this.saleOrg = saleOrg;
+		this.buyOrg = buyOrg;
+		this.transType = transType;
+		this.amount = amount;
+		this.conHash = conHash;
+		this.latestStatus = latestStatus;
+		this.transTime = transTime;
+		this.updateTime = updateTime;
+	}
 
+	public String getConID() {
+		return conID;
+	}
+
+	public void setConID(String conID) {
+		this.conID = conID;
+	}
+
+	public String getSaleOrg() {
+		return saleOrg;
+	}
+
+	public void setSaleOrg(String saleOrg) {
+		this.saleOrg = saleOrg;
+	}
+
+	public String getBuyOrg() {
+		return buyOrg;
+	}
+
+	public void setBuyOrg(String buyOrg) {
+		this.buyOrg = buyOrg;
+	}
+
+	public String getTransType() {
+		return transType;
+	}
+
+	public void setTransType(String transType) {
+		this.transType = transType;
+	}
+
+	public long getAmount() {
+		return amount;
+	}
+
+	public void setAmount(long amount) {
+		this.amount = amount;
+	}
+
+	public String getConHash() {
+		return conHash;
+	}
+
+	public void setConHash(String conHash) {
+		this.conHash = conHash;
+	}
+
+	public String getLatestStatus() {
+		return latestStatus;
+	}
+
+	public void setLatestStatus(String latestStatus) {
+		this.latestStatus = latestStatus;
+	}
+
+	public String getTransTime() {
+		return transTime;
+	}
+
+	public void setTransTime(String transTime) {
+		this.transTime = transTime;
+	}
+
+	public String getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(String updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	@Override
+	public String toString() {
+		return "Transaction [conID=" + conID + ", saleOrg=" + saleOrg + ", buyOrg=" + buyOrg + ", transType="
+				+ transType + ", amount=" + amount + ", conHash=" + conHash + ", latestStatus=" + latestStatus
+				+ ", transTime=" + transTime + ", updateTime=" + updateTime + "]";
+	}
+    
+    
+	
 }
